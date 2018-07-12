@@ -1,0 +1,22 @@
+{
+  "name": "blockchain-in",
+  "version": "1.0.0",
+  "description": "Blockchain created in javascript",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kbgoda/blockchain-in-js.git"
+  },
+  "author": "Karan Goda",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kbgoda/blockchain-in-js/issues"
+  },
+  "homepage": "https://github.com/kbgoda/blockchain-in-js#readme",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1"
+  }
+}
