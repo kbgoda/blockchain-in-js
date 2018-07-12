@@ -4,13 +4,25 @@ const SHA256 = require('crypto-js/sha256');
 class Block {
     constructor(index, timestamp, data, previousHash = '') {
         this.index = index;
+        this.previousHash = previousHash;
         this.timestamp = timestamp;
         this.data = data;
-        this.hash = ''; // Hash will be set later
+        this.hash = this.calculateHash(); // Hash will be set later
+        this.nonce = 0;
     }
 
     calculateHash() {
-        return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data)).toString();
+        return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce).toString();
+    }
+
+    // Implementing POW
+    mineBlock(difficulty) {
+        while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+            this.nonce++;    
+            this.hash = this.calculateHash();
+        }
+
+        console.log("Block mined: " + this.hash);
     }
 }
 
@@ -19,6 +31,7 @@ class Blockchain {
     constructor() {
         // Chain is an array of blocks
         this.chain = [this.createGenesisBlock]; // Empty chain
+        this.difficulty = 5; // This difficulty allows us to control how fast blocks are added to the network
     }
 
     createGenesisBlock() {
@@ -31,7 +44,8 @@ class Blockchain {
 
     addBlock(newBlock) {
         newBlock.previousHash = this.getLatestBlock().hash;
-        newBlock.hash = newBlock.calculateHash();
+        // newBlock.hash = newBlock.calculateHash();
+        newBlock.mineBlock(this.difficulty);
         this.chain.push(newBlock);
     }
 
@@ -45,19 +59,22 @@ class Blockchain {
                 return false;
             }
 
-            if(currentBlock.previousHash !== previousBlock.calculateHash) {
+            if(currentBlock.previousHash !== previousBlock.hash) {
                 return false;
             }
-
-            return true;
         }
+        return true;
     }
 }
 
 let kCoin = new Blockchain();
-kCoin.addBlock(new Block(0, "10/072017", {amount: 4}));
-kCoin.addBlock(new Block(1, "11/072017", {amount: 8}));
-kCoin.addBlock(new Block(2, "12/072017", {amount: 12}));
+
+console.log("Mining first block\n");
+kCoin.addBlock(new Block(1, "10/072017", {amount: 4}));
+console.log("Mining second block\n");
+kCoin.addBlock(new Block(2, "11/072017", {amount: 8}));
+console.log("Mining third block\n");
+kCoin.addBlock(new Block(3, "12/072017", {amount: 12}));
 
 console.log("\nIs chain valid: " + kCoin.isChainValid() + "\n");
 
